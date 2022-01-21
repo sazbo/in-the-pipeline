@@ -1,0 +1,40 @@
+stages:
+  - git-clone
+  - build
+  - test
+  - deploy
+
+git-clone-job:
+  stage: git-clone
+  script:
+    - git clone https://github-ci-token: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@github.com/CodecoolGlobal/tinker-tailor-docker-spy-general-martingrant01
+  artifacts:
+    paths:
+      - tinker-tailor-docker-spy-general-martingrant01
+
+build-code-job:
+  stage: build
+  tags:
+    - ec2-pipeline
+  script:
+    - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/u6g1v3w3
+    - cd tinker-tailor-docker-spy-general-martingrant01/app
+    - docker build -t ktor .
+    - docker tag ktor:latest public.ecr.aws/u6g1v3w3/ktor:latest
+    - docker push public.ecr.aws/u6g1v3w3/ktor:latest
+
+test-code-job:
+  stage: test
+  script:
+    - echo "Tests goes here"
+    - ls
+
+deploy-code-job:
+  stage: deploy
+  tags:
+    - ec2-pipeline
+  script:
+    - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/u6g1v3w3
+    - aws eks --region eu-central-1 update-kubeconfig --name in-the-pipeline-geeky-blinders-cluster
+    - cd tinker-tailor-docker-spy-general-martingrant01
+    - bash check_helm_exist.sh
