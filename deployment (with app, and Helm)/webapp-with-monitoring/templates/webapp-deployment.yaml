@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.kotlin.deploymentName }}
+  labels:
+    app: {{ .Values.kotlin.appName }}
+  namespace: {{ .Values.kotlin.namespace }}
+spec:
+  replicas: {{ .Values.kotlin.replicaNumber }}
+  selector:
+    matchLabels:
+      app: {{ .Values.kotlin.appName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.kotlin.appName }}
+    spec:
+      containers:
+        - name: {{ .Values.kotlin.appName }}
+          image: {{ .Values.kotlin.image }}
+          ports:
+            - containerPort: {{ .Values.kotlin.containerPort }}

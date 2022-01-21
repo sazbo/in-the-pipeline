@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+
+    stages {
+        stage("Git Clone") {
+            steps {
+                git credentialsId: 'GitHub-Credentials', url: 'https://github.com/CodecoolGlobal/tinker-tailor-docker-spy-general-martingrant01'
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                echo "Building Docker image and pushing it to ECR"
+                dir("app") {
+                    sh "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/u6g1v3w3"
+                    sh "docker build -t ktor ."
+                    sh 'docker tag ktor:latest "public.ecr.aws/u6g1v3w3/ktor:latest"'
+                    sh 'docker push "public.ecr.aws/u6g1v3w3/ktor:latest"'
+                }
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Tests goes here'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying the application....'
+                sh 'aws eks --region eu-central-1 update-kubeconfig --name in-the-pipeline-geeky-blinders-cluster'
+                sh 'bash check_helm_exist.sh'
+            }
+        }
+    }
+}

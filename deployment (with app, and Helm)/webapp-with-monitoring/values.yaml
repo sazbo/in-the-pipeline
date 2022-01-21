@@ -1,0 +1,8 @@
+kotlin:
+  deploymentName: ktor-deployment
+  appName: kotlin
+  serviceName: kotlin-service
+  namespace: kotlin-app
+  replicaNumber: 2
+  containerPort: 8080
+  image: public.ecr.aws/u6g1v3w3/ktor:latest
