@@ -38,3 +38,12 @@ deploy-code-job:
     - aws eks --region eu-central-1 update-kubeconfig --name in-the-pipeline-geeky-blinders-cluster
     - cd tinker-tailor-docker-spy-general-martingrant01
     - bash check_helm_exist.sh
+    
+deploy-prom-grafana-job:
+  stage: deploy
+  tags:
+    - ec2-pipeline
+  script:
+    - cd tinker-tailor-docker-spy-general-martingrant01
+    - bash prometheus-grafana.sh
+
